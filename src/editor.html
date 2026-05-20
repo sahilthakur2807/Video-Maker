@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor - ClipVid Studio</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="editor-layout">
+        <header class="editor-header flex items-center justify-between">
+            <div class="flex items-center gap-20">
+                <a href="index.html" class="logo" style="text-decoration:none; color:inherit;">
+                    <img src="../public/logo_nobackground.png" alt="ClipVid Studio Logo" style="width: 120px; height: 150px; margin-right: -20px; margin-left: -20px;">
+                    <span>ClipVid Studio</span>
+                </a>
+                <span id="project-title-display" style="font-weight: 500; margin-left: 20px; color: var(--text-muted);"></span>
+            </div>
+            <div class="flex" style="gap:8px;">
+                <button class="btn btn-outline">Undo</button>
+                <button class="btn btn-outline">Redo</button>
+                <button class="btn btn-primary">Export</button>
+            </div>
+        </header>
+
+        <main class="editor-main">
+            <aside class="editor-sidebar flex flex-col items-center" style="padding-top: 20px;">
+                <div class="upload-container">
+                    <button id="upload-btn" class="upload-btn-circle" title="Upload Media">
+                        <span style="font-size: 24px; line-height: 1;">+</span>
+                    </button>
+                    <div id="upload-dropdown" class="upload-dropdown">
+                        <div class="dropdown-item" onclick="document.getElementById('file-input').click()">
+                            <span class="icon">📁</span>
+                            <div class="dropdown-text">
+                                <span class="title">My Device</span>
+                                <span class="subtitle">Upload from your computer</span>
+                            </div>
+                        </div>
+                        <div class="dropdown-item">
+                            <span class="icon">☁️</span>
+                            <div class="dropdown-text">
+                                <span class="title">Google Drive</span>
+                                <span class="subtitle">Import from your drive</span>
+                            </div>
+                        </div>
+                        <div class="dropdown-item">
+                            <span class="icon">🖼️</span>
+                            <div class="dropdown-text">
+                                <span class="title">Stock Media</span>
+                                <span class="subtitle">Search professional assets</span>
+                            </div>
+                        </div>
+                        <input type="file" id="file-input" style="display: none;" multiple accept="image/*,video/*">
+                    </div>
+                </div>
+            </aside>
+
+            <div class="editor-workspace">
+                <div class="workspace-top">
+                    <div class="adjustment-panel">
+                        <h3>Adjustments</h3>
+                        <p style="margin-top: 20px; color: #999;">Select a clip to see properties.</p>
+                    </div>
+                    <div class="canvas-area">
+                        <div class="placeholder-box">
+                            <div style="font-size: 3rem; margin-bottom: 10px;">🎬</div>
+                            <p>Video Preview Area</p>
+                            <p style="font-size: 0.8rem;" id="aspect-ratio-display"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="timeline-area">
+                    <div style="padding: 10px 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between;">
+                        <span>Timeline</span>
+                        <span id="timecode">00:00:00 / 00:00:00</span>
+                    </div>
+                    <div style="padding: 40px; text-align: center; color: #ccc;">
+                        Timeline Tracks Placeholder
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Basic script to load project info
+        const urlParams = new URLSearchParams(window.location.search);
+        const projectId = urlParams.get('projectId');
+        
+        if (projectId) {
+            const projects = JSON.parse(localStorage.getItem('clipvid_projects') || '[]');
+            const project = projects.find(p => p.id === projectId);
+            
+            if (project) {
+                document.getElementById('project-title-display').textContent = `—${project.name}`;
+                document.getElementById('aspect-ratio-display').textContent = `Mode: ${project.ratio}`;
+                document.title = `${project.name} - Editor `;
+            }
+        }
+
+        // Upload Dropdown Logic
+        const uploadBtn = document.getElementById('upload-btn');
+        const uploadDropdown = document.getElementById('upload-dropdown');
+
+        uploadBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            uploadDropdown.classList.toggle('show');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!uploadContainer.contains(e.target)) {
+                uploadDropdown.classList.remove('show');
+            }
+        });
+
+        const uploadContainer = document.querySelector('.upload-container');
+    </script>
+</body>
+</html>

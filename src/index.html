@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - ClipVid Studio</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo"> <!-- now lets add our logo here -->
+                    <img src="../public/logo_nobackground.png" alt="ClipVid Studio Logo" style="width: 200px; height: 100px; margin-right: -50px; margin-left: -50px;"> <!-- Yahan maine margin add kiya to zoom the image -->
+                    <span style="white-space: nowrap;">ClipVid Studio</span>
+                </div>
+            </div>
+            <!--  -->
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item active">
+                    <span class="nav-icon"></span> Dashboard
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-icon"></span> My Projects
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-icon"></span> Export History
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-icon"></span> Settings
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="avatar">ST</div>
+                    <div class="user-info">
+                        <div class="user-name">Sahil Thakur</div>
+                        <div class="user-plan">Free Plan</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="content-header">
+                <div class="search-bar">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" placeholder="Search projects..." id="project-search">
+                </div>
+            </header>
+
+            <div class="content-body">
+                <section class="hero-section">
+                    <div class="hero-text">
+                        <h1>Welcome to your Studio</h1>
+                        <p>Create something amazing today.</p>
+                    </div>
+                    <button class="btn btn-primary btn-large" id="open-modal-btn">
+                        <span style="font-size: 24px;">+</span> Create New Project
+                    </button>
+                </section>
+
+                <section class="projects-section">
+                    <div class="section-header">
+                        <h2>Recent Projects</h2>
+                    </div>
+                    
+                    <div id="project-grid" class="project-grid">
+                        <div id="empty-state" class="empty-state">
+                            <div class="empty-icon"></div>
+                            <h3>No projects yet</h3>
+                            <p>Click "Create New Project" to get started!</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <div id="create-project-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create New Project</h2>
+                <button class="close-modal" id="close-modal-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="project-name">Project Name</label>
+                    <input type="text" id="project-name" placeholder="Enter project name..." autofocus>
+                </div> 
+                <div class="form-group">
+                    <label for="aspect-ratio">Select Aspect Ratio</label>
+                    <select id="aspect-ratio">
+                        <option value="16:9">16:9 (Widescreen)</option>
+                        <option value="9:16">9:16 (Vertical/Mobile)</option>
+                        <option value="1:1">1:1 (Square)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancel-modal-btn">Cancel</button>
+                <button class="btn btn-primary" id="start-editing-btn">Start Editing</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>
