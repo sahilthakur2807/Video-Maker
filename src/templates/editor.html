@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editor - ClipVid Studio</title>
     <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/timeline.css">
 </head>
 <body>
     <div class="editor-layout">
@@ -25,7 +26,8 @@
 
         <main class="editor-main">
             <aside class="editor-sidebar">
-                <button class="sidebar-add-btn">+</button>
+                <button class="sidebar-add-btn" id="add-media-btn">+</button>
+                <input type="file" id="media-upload-input" accept="image/*" multiple style="display: none;">
                 
                 <a href="#" class="sidebar-item active">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19a3.5 3.5 0 1 1 0-7c.3 0 .5.03.8.08V12a5 5 0 0 0-10 0v.1A3.5 3.5 0 1 0 9 19h8.5Z"/><path d="M12 12v6"/><path d="m9 15 3-3 3 3"/></svg>
@@ -69,26 +71,43 @@
                         <h3>Adjustments</h3>
                         <p style="margin-top: 20px; color: #999;">Select a clip to see properties.</p>
                     </div>
-                    <div class="canvas-area">
-                        <div class="placeholder-box">
+                    <div class="canvas-area" id="canvas-area">
+                        <div class="placeholder-box" id="preview-placeholder">
                             <div style="font-size: 3rem; margin-bottom: 10px;">🎬</div>
                             <p>Video Preview Area</p>
                             <p style="font-size: 0.8rem;" id="aspect-ratio-display"></p>
                         </div>
                     </div>
                 </div>
+                
                 <div class="timeline-area">
-                    <div style="padding: 10px 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between;">
+                    <div class="timeline-header">
                         <span>Timeline</span>
                         <span id="timecode">00:00:00 / 00:00:00</span>
                     </div>
-                    <div style="padding: 40px; text-align: center; color: #ccc;">
-                        Timeline Tracks Placeholder
+                    <div class="timeline-ruler"></div>
+                    <div class="timeline-content">
+                        <div class="playhead"></div>
+                        <div class="timeline-tracks-container">
+                            <div class="track video">
+                                <div class="track-label">Video</div>
+                                <div class="track-content"></div>
+                            </div>
+                            <div class="track audio">
+                                <div class="track-label">Audio</div>
+                                <div class="track-content"></div>
+                            </div>
+                            <div class="track text">
+                                <div class="track-label">Text</div>
+                                <div class="track-content"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </main>
     </div>
     <script src="../scripts/editor.js"></script>
+    <script src="../scripts/timeline.js"></script>
 </body>
 </html>
