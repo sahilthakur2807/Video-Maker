@@ -49,7 +49,10 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Remove existing preview
         const existingPreview = document.getElementById('active-preview');
-        if (existingPreview) existingPreview.remove();
+        if (existingPreview) {
+            if (existingPreview.src === src) return; // Already showing this
+            existingPreview.remove();
+        }
         
         // Create new preview
         const img = document.createElement('img');
@@ -64,7 +67,32 @@ document.addEventListener('DOMContentLoaded', () => {
         canvasArea.appendChild(img);
     }
     
-    // Listen for preview events from timeline clips (using event delegation)
+    // Sync preview with timeline playback/seeking
+    window.addEventListener('timelineUpdate', (e) => {
+        const time = e.detail.time;
+        const clips = document.querySelectorAll('.timeline-clip');
+        let activeClipSrc = null;
+
+        clips.forEach(clip => {
+            const start = parseFloat(clip.dataset.startTime);
+            const duration = parseFloat(clip.dataset.duration);
+            if (time >= start && time < (start + duration)) {
+                const img = clip.querySelector('img');
+                if (img) activeClipSrc = img.src;
+            }
+        });
+
+        if (activeClipSrc) {
+            previewImage(activeClipSrc);
+        } else {
+            // No clip at current time
+            const existingPreview = document.getElementById('active-preview');
+            if (existingPreview) existingPreview.remove();
+            if (previewPlaceholder) previewPlaceholder.style.display = 'flex';
+        }
+    });
+
+    // Manual click to preview
     document.addEventListener('click', (e) => {
         const clip = e.target.closest('.timeline-clip');
         if (clip) {
