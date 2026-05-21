@@ -1,0 +1,12 @@
+{
+  "name": "clipvid-studio",
+  "version": "1.0.0",
+  "description": "Professional video editor and studio dashboard",
+  "main": "index.html",
+  "scripts": {
+    "start": "serve ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
