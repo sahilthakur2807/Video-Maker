@@ -7,23 +7,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let isDraggingPlayhead = false;
     let isPlaying = false;
-    let currentTime = 0; // Current time in seconds
+    let currentTime = 0;
     let lastTimestamp = 0;
     
     const TRACK_LABEL_WIDTH = 60;
-    let pixelsPerSecond = 50; // Dynamic zoom level
-    const CLIP_DEFAULT_DURATION = 3; // 3 seconds per image
+    let pixelsPerSecond = 50;
+    const CLIP_DEFAULT_DURATION = 3;
 
-    // Initialize Ruler
     function initRuler() {
         if (!timelineRuler) return;
         timelineRuler.innerHTML = '';
-        const duration = 300; // 5 minutes max for now
-        
-        // Calculate step based on zoom
+        const duration = 300;
         let step = 1;
         if (pixelsPerSecond < 10) step = 10;
-        if (pixelsPerSecond < 2) step = 30;
         if (pixelsPerSecond > 200) step = 0.1;
 
         for (let i = 0; i <= duration; i += step) {
@@ -31,7 +27,6 @@ document.addEventListener('DOMContentLoaded', () => {
             mark.className = 'ruler-mark' + (i % (step * 5) === 0 ? ' major' : '');
             mark.style.left = (TRACK_LABEL_WIDTH + i * pixelsPerSecond) + 'px';
             timelineRuler.appendChild(mark);
-
             if (i % (step * 10) === 0) {
                 const label = document.createElement('div');
                 label.className = 'ruler-label';
@@ -49,47 +44,50 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}.${ms.toString().padStart(2, '0')}`;
     }
 
-    function updateUI() {
-        // Update Playhead
-        playhead.style.left = (TRACK_LABEL_WIDTH + currentTime * pixelsPerSecond) + 'px';
-        
-        // Update Timecode
-        if (timecodeDisplay) {
-            timecodeDisplay.textContent = `${formatTime(currentTime)} / 00:00:00`;
-        }
+    function recalculateLayout() {
+        const tracks = document.querySelectorAll('.track-content');
+        tracks.forEach(track => {
+            const clips = Array.from(track.querySelectorAll('.timeline-clip'));
+            let currentStart = 0;
+            clips.forEach(clip => {
+                clip.dataset.startTime = currentStart;
+                currentStart += parseFloat(clip.dataset.duration);
+            });
+        });
+    }
 
-        // Update all clips based on new scale
+    function getTotalDuration() {
         const clips = document.querySelectorAll('.timeline-clip');
+        let maxEnd = 0;
         clips.forEach(clip => {
+            const end = parseFloat(clip.dataset.startTime) + parseFloat(clip.dataset.duration);
+            if (end > maxEnd) maxEnd = end;
+        });
+        return maxEnd;
+    }
+
+    function updateUI() {
+        recalculateLayout();
+        const totalDuration = getTotalDuration();
+        playhead.style.left = (TRACK_LABEL_WIDTH + currentTime * pixelsPerSecond) + 'px';
+        if (timecodeDisplay) timecodeDisplay.textContent = `${formatTime(currentTime)} / ${formatTime(totalDuration)}`;
+        document.querySelectorAll('.timeline-clip').forEach(clip => {
             const start = parseFloat(clip.dataset.startTime);
             const duration = parseFloat(clip.dataset.duration);
             clip.style.left = (start * pixelsPerSecond) + 'px';
             clip.style.width = (duration * pixelsPerSecond) + 'px';
         });
-
-        // Trigger preview update
         window.dispatchEvent(new CustomEvent('timelineUpdate', { detail: { time: currentTime } }));
     }
+    
+    window.updateTimelineUI = updateUI;
+    window.isTimelinePlaying = () => isPlaying;
 
     function setTime(newTime) {
         currentTime = Math.max(0, newTime);
         updateUI();
     }
 
-    // Zoom Logic
-    if (timelineContent) {
-        timelineContent.addEventListener('wheel', (e) => {
-            if (e.ctrlKey || e.metaKey) {
-                e.preventDefault();
-                const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
-                pixelsPerSecond = Math.min(Math.max(1, pixelsPerSecond * zoomFactor), 2000);
-                initRuler();
-                updateUI();
-            }
-        }, { passive: false });
-    }
-
-    // Playback Logic
     function togglePlay() {
         isPlaying = !isPlaying;
         if (isPlaying) {
@@ -98,20 +96,27 @@ document.addEventListener('DOMContentLoaded', () => {
             requestAnimationFrame(playLoop);
         } else {
             playBtn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Play';
+            // Pause all audio when stopping
+            document.querySelectorAll('audio').forEach(a => a.pause());
         }
     }
 
     function playLoop(timestamp) {
         if (!isPlaying) return;
+        const totalDuration = getTotalDuration();
         const dt = (timestamp - lastTimestamp) / 1000;
         lastTimestamp = timestamp;
+        if (currentTime + dt >= totalDuration) {
+            setTime(totalDuration);
+            togglePlay();
+            return;
+        }
         setTime(currentTime + dt);
         requestAnimationFrame(playLoop);
     }
 
     if (playBtn) playBtn.addEventListener('click', togglePlay);
 
-    // Interactivity for seeking
     if (timelineContent) {
         timelineContent.addEventListener('mousedown', (e) => {
             if (e.offsetY < 24 || e.target.classList.contains('timeline-ruler')) {
@@ -119,82 +124,90 @@ document.addEventListener('DOMContentLoaded', () => {
                 handleSeek(e.clientX);
             }
         });
-
-        window.addEventListener('mousemove', (e) => {
-            if (isDraggingPlayhead) handleSeek(e.clientX);
-        });
-
-        window.addEventListener('mouseup', () => {
-            isDraggingPlayhead = false;
-        });
+        window.addEventListener('mousemove', (e) => { if (isDraggingPlayhead) handleSeek(e.clientX); });
+        window.addEventListener('mouseup', () => { isDraggingPlayhead = false; });
     }
 
     function handleSeek(clientX) {
         const rect = timelineContent.getBoundingClientRect();
-        const scrollLeft = timelineContent.scrollLeft;
-        const relativeX = clientX - rect.left + scrollLeft - TRACK_LABEL_WIDTH;
+        const relativeX = clientX - rect.left + timelineContent.scrollLeft - TRACK_LABEL_WIDTH;
         setTime(relativeX / pixelsPerSecond);
     }
 
-    // Sequential Add Clip Logic
-    window.addClipToTimeline = function(src, name, type = 'video') {
+    window.addClipToTimeline = function(src, name, type = 'video', audioSrc = null) {
         const track = document.querySelector(`.track.${type} .track-content`);
         if (!track) return;
-
-        const existingClips = track.querySelectorAll('.timeline-clip');
-        let nextStartTime = 0;
-        if (existingClips.length > 0) {
-            const lastClip = existingClips[existingClips.length - 1];
-            nextStartTime = parseFloat(lastClip.dataset.startTime) + parseFloat(lastClip.dataset.duration);
-        }
-
         const clip = document.createElement('div');
         clip.className = `timeline-clip ${type}`;
-        clip.dataset.startTime = nextStartTime;
-        clip.dataset.duration = CLIP_DEFAULT_DURATION;
         
-        const img = document.createElement('img');
-        img.src = src;
-        img.className = 'clip-thumb';
+        if (type === 'video') {
+            clip.dataset.duration = CLIP_DEFAULT_DURATION;
+            clip.dataset.brightness = "100"; clip.dataset.contrast = "100"; clip.dataset.saturation = "100";
+            clip.dataset.filter = "none"; clip.dataset.anim = "none";
+            const img = document.createElement('img');
+            img.src = src; img.className = 'clip-thumb';
+            clip.appendChild(img);
+        } else if (type === 'audio') {
+            clip.dataset.duration = 5;
+            const audio = document.createElement('audio');
+            audio.src = audioSrc;
+            audio.preload = 'auto';
+            audio.autoplay = false; // Explicitly disable autoplay
+            clip.appendChild(audio);
+            audio.onloadedmetadata = () => { clip.dataset.duration = audio.duration; updateUI(); };
+            const icon = document.createElement('span'); icon.innerHTML = '🎵 ';
+            clip.appendChild(icon);
+            
+            const handle = document.createElement('div');
+            handle.className = 'trim-handle right';
+            clip.appendChild(handle);
+
+            let isTrimming = false; let sX; let sDur;
+            handle.addEventListener('mousedown', (e) => {
+                e.stopPropagation(); isTrimming = true; sX = e.clientX;
+                sDur = parseFloat(clip.dataset.duration);
+            });
+            window.addEventListener('mousemove', (e) => {
+                if (isTrimming) {
+                    const dx = e.clientX - sX;
+                    clip.dataset.duration = Math.max(0.1, sDur + (dx / pixelsPerSecond));
+                    updateUI();
+                }
+            });
+            window.addEventListener('mouseup', () => isTrimming = false);
+        }
         
         const title = document.createElement('span');
-        title.className = 'clip-title';
-        title.textContent = name;
-        
-        clip.appendChild(img);
+        title.className = 'clip-title'; title.textContent = name;
         clip.appendChild(title);
         track.appendChild(clip);
 
-        updateUI();
+        const selectClip = () => {
+            document.querySelectorAll('.timeline-clip').forEach(c => c.classList.remove('selected'));
+            clip.classList.add('selected');
+            window.dispatchEvent(new CustomEvent('clipSelected', { detail: { clip: clip } }));
+        };
 
-        // Clip Dragging Logic
-        let isDraggingClip = false;
-        let startX;
-        let originalStartTime;
+        selectClip();
+        clip.addEventListener('click', (e) => { e.stopPropagation(); selectClip(); });
 
+        let isDraggingClip = false; let startX; let originalStartTime;
         clip.addEventListener('mousedown', (e) => {
-            e.stopPropagation();
-            isDraggingClip = true;
-            startX = e.clientX;
+            if (e.target.classList.contains('trim-handle')) return;
+            e.stopPropagation(); isDraggingClip = true; startX = e.clientX;
             originalStartTime = parseFloat(clip.dataset.startTime);
-            clip.style.zIndex = '100';
+            clip.style.zIndex = '100'; selectClip();
         });
-
         window.addEventListener('mousemove', (e) => {
             if (isDraggingClip) {
-                const dx = e.clientX - startX;
-                const dt = dx / pixelsPerSecond;
-                clip.dataset.startTime = Math.max(0, originalStartTime + dt);
-                updateUI();
+                const dx = e.clientX - startX; const dt = dx / pixelsPerSecond;
+                clip.style.left = (TRACK_LABEL_WIDTH + (originalStartTime + dt) * pixelsPerSecond) + 'px';
             }
         });
-
         window.addEventListener('mouseup', () => {
-            if (isDraggingClip) {
-                isDraggingClip = false;
-                clip.style.zIndex = '';
-            }
+            if (isDraggingClip) { isDraggingClip = false; clip.style.zIndex = ''; updateUI(); }
         });
+        updateUI();
     };
 
     initRuler();

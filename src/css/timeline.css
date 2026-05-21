@@ -6,6 +6,7 @@
     height: 300px;
     position: relative;
     border-top: 1px solid #333;
+    overflow-y: scroll;
 }
 
 .timeline-header {
@@ -60,7 +61,7 @@
 .timeline-tracks-container {
     display: flex;
     flex-direction: column;
-    min-width: 2000px; /* Large width for scrolling */
+    min-width: 2000px;
 }
 
 .track {
@@ -103,7 +104,7 @@
     background: #ff4500;
     z-index: 20;
     pointer-events: none;
-    left: 60px; /* Initial position */
+    left: 60px;
 }
 
 .playhead::after {
@@ -119,7 +120,6 @@
     rotate: 45deg;
 }
 
-/* Professional Clip Styles */
 .timeline-clip {
     position: absolute;
     height: 36px;
@@ -138,13 +138,16 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
-.timeline-clip:active {
-    cursor: grabbing;
-}
-
+.timeline-clip:active { cursor: grabbing; }
 .timeline-clip.video { background: #2980b9; border-color: #2471a3; }
 .timeline-clip.audio { background: #27ae60; border-color: #1e8449; }
 .timeline-clip.text { background: #8e44ad; border-color: #7d3c98; }
+
+.timeline-clip.selected {
+    border: 2px solid #fff;
+    box-shadow: 0 0 10px rgba(255,255,255,0.5);
+    z-index: 5;
+}
 
 .clip-thumb {
     width: 40px;
@@ -159,4 +162,21 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.trim-handle {
+    position: absolute;
+    top: 0;
+    width: 6px;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.3);
+    cursor: ew-resize;
+    z-index: 10;
+}
+
+.trim-handle:hover { background: rgba(255, 255, 255, 0.8); }
+.trim-handle.right {
+    right: 0;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
 }

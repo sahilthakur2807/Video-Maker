@@ -6,6 +6,7 @@
     <title>Editor - ClipVid Studio</title>
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/timeline.css">
+    <link rel="stylesheet" href="../css/adjustments.css">
 </head>
 <body>
     <div class="editor-layout">
@@ -76,8 +77,71 @@
             <div class="editor-workspace">
                 <div class="workspace-top">
                     <div class="adjustment-panel">
-                        <h3>Adjustments</h3>
-                        <p style="margin-top: 20px; color: #999;">Select a clip to see properties.</p>
+                        <div class="adjustment-header">
+                            <h3>Adjustments</h3>
+                            <div class="adjustment-tabs">
+                                <button class="tab-btn active" data-tab="static">Static</button>
+                                <button class="tab-btn" data-tab="colour">Colour</button>
+                            </div>
+                        </div>
+
+                        <div id="static-adjustments" class="tab-content active">
+                            <div class="adjustment-group">
+                                <label>Animation</label>
+                                <select id="anim-select">
+                                    <option value="none">None</option>
+                                    <option value="fade">Fade</option>
+                                    <option value="slide">Slide</option>
+                                    <option value="zoom">Zoom</option>
+                                </select>
+                            </div>
+                            <div class="adjustment-group">
+                                <label>Filter</label>
+                                <select id="filter-select">
+                                    <option value="none">None</option>
+                                    <option value="grayscale">Grayscale</option>
+                                    <option value="sepia">Sepia</option>
+                                    <option value="invert">Invert</option>
+                                    <option value="blur">Blur</option>
+                                </select>
+                            </div>
+                            <div class="adjustment-group">
+                                <label>Image Duration (s)</label>
+                                <select id="duration-input">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div id="colour-adjustments" class="tab-content">
+                            <div class="adjustment-group">
+                                <div class="label-row">
+                                    <label>Brightness</label>
+                                    <span class="value-display" id="brightness-val">100%</span>
+                                </div>
+                                <input type="range" id="brightness-slider" min="0" max="200" value="100">
+                            </div>
+                            <div class="adjustment-group">
+                                <div class="label-row">
+                                    <label>Contrast</label>
+                                    <span class="value-display" id="contrast-val">100%</span>
+                                </div>
+                                <input type="range" id="contrast-slider" min="0" max="200" value="100">
+                            </div>
+                            <div class="adjustment-group">
+                                <div class="label-row">
+                                    <label>Saturation</label>
+                                    <span class="value-display" id="saturation-val">100%</span>
+                                </div>
+                                <input type="range" id="saturation-slider" min="0" max="200" value="100">
+                            </div>
+                        </div>
+                        
+                        <p id="no-clip-message" style="margin-top: 20px; color: #999; display: none;">Select a clip to see properties.</p>
                     </div>
                     <div class="canvas-area" id="canvas-area">
                         <div class="placeholder-box" id="preview-placeholder">
@@ -117,5 +181,6 @@
     </div>
     <script src="../scripts/editor.js"></script>
     <script src="../scripts/timeline.js"></script>
+    <script src="../scripts/adjustments.js"></script>
 </body>
 </html>

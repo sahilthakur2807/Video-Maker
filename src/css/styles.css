@@ -14,6 +14,7 @@
   --header-height: 60px;
   --sidebar-width: 80px;
   --timeline-height: 300px;
+  --webkit-appearance: none;
 }
 
 * {
@@ -200,7 +201,7 @@ h1,h2,h3 {
 }
 
 .adjustment-panel {
-  width: 320px; /* Reduced width to give more space to viewer */
+  width: 500px; 
   margin: 16px;
   background: white;
   border-radius: 12px;
@@ -235,14 +236,8 @@ h1,h2,h3 {
 }
 
 #active-preview {
-  width: 95%; 
-  height: 95%;
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-  background-color: transparent;
-  border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+  height: 100%;
+  margin-right: 200px;
 }
 
 .timeline-tracks {
