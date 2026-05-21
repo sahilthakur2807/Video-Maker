@@ -14,12 +14,12 @@
     <div class="dashboard-layout">
         <aside class="sidebar">
             <div class="sidebar-header">
-                <div class="logo"> <!-- now lets add our logo here -->
-                    <img src="../../public/logo_nobackground.png" alt="ClipVid Studio Logo" style="width: 200px; height: 100px; margin: -20px -50px "> <!-- Yahan maine margin add kiya to zoom the image -->
+                <div class="logo">
+                    <img src="../../public/logo_nobackground.png" alt="ClipVid Studio Logo" style="width: 200px; height: 100px; margin: -20px -50px ">
                     <span style="white-space: nowrap;">ClipVid Studio</span>
                 </div>
             </div>
-            <!--  -->
+            
             <nav class="sidebar-nav">
                 <a href="index.html" class="nav-item active">
                     <span class="nav-icon"></span> Dashboard
@@ -58,9 +58,9 @@
                 <section class="hero-section">
                     <div class="hero-text">
                         <h1>Welcome to your Studio</h1>
-                        <p>Create something amazing today.</p>
+                        <p>Create something amazing today.</p>ew0
                     </div>
-                    <button class="btn btn-primary btn-large" id="open-modal-btn">
+                    <button class="btn btn-primary btn-large" id="open-modal-btn" style="border-radius: 10px;">
                         <span style="font-size: 24px;">+</span> Create New Project
                     </button>
                 </section>
@@ -70,7 +70,7 @@
                         <h2>Recent Projects</h2>
                     </div>
                     
-                    <div id="project-grid" class="project-grid">
+                    <div style="padding-top: 20px;" id="project-grid" class="project-grid">
                         <div id="empty-state" class="empty-state">
                             <div class="empty-icon"></div>
                             <h3>No projects yet</h3>
@@ -103,8 +103,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-outline" id="cancel-modal-btn">Cancel</button>
-                <button class="btn btn-primary" id="start-editing-btn">Start Editing</button>
+                <button class="btn btn-outline" id="cancel-modal-btn" style="border: 1px solid #ddd; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Cancel</button>
+                <button class="btn btn-primary" id="start-editing-btn" style="background: #008080; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Start Editing</button>
             </div>
         </div>
     </div>

@@ -4,14 +4,14 @@
     display: flex;
     height: 100vh;
     width: 100vw;
-    overflow: scroll;
+    overflow: hidden;
 }
 
 /* 1. Sidebar Styles */
 .sidebar {
     width: 280px;
     background-color: #ffffff;
-    border-right: 1px solid var(--border-color);
+    border-right: 1px solid #eee;
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
@@ -32,7 +32,7 @@
     align-items: center;
     gap: 12px;
     padding: 12px 16px;
-    color: var(--text-color);
+    color: #333;
     text-decoration: none;
     border-radius: 8px;
     font-size: 0.95rem;
@@ -47,7 +47,7 @@
 
 .nav-item.active {
     background-color: rgba(0, 128, 128, 0.1);
-    color: var(--primary-color);
+    color: #008080;
 }
 
 .nav-icon {
@@ -68,7 +68,7 @@
 .avatar {
     width: 40px;
     height: 40px;
-    background-color: var(--primary-color);
+    background-color: #008080;
     color: white;
     border-radius: 50%;
     display: flex;
@@ -84,7 +84,7 @@
 
 .user-info .user-plan {
     font-size: 0.75rem;
-    color: var(--text-muted);
+    color: #888;
 }
 
 /* 2. Main Content Styles */
@@ -127,14 +127,6 @@
     width: 100%;
 }
 
-.notification-btn {
-    background: none;
-    border: none;
-    font-size: 1.2rem;
-    cursor: pointer;
-    color: var(--text-muted);
-}
-
 .content-body {
     padding: 40px;
 }
@@ -157,80 +149,141 @@
 }
 
 .hero-text p {
-    color: var(--text-muted);
+    color: #888;
     font-size: 1.1rem;
 }
 
-.btn-large {
-    padding: 16px 32px;
-    font-size: 1rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 128, 128, 0.2);
-}
-
-/* Projects Grid */
-.projects-section .section-header {
-    margin-bottom: 24px;
-}
-
+/* Nice Project Card Styles */
 .project-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 24px;
 }
 
 .project-card {
     background: white;
     border: 1px solid #eee;
-    border-radius: 12px;
+    border-radius: 16px;
     overflow: hidden;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
     position: relative;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
 }
 
 .project-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-    border-color: var(--primary-color);
+    transform: translateY(-8px);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.1);
+    border-color: #008080;
 }
 
-.card-thumb {
-    height: 160px;
-    background-color: #f0f0f0;
+.project-thumb {
+    height: 180px;
+    background: linear-gradient(45deg, #f3f3f3, #e9e9e9);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2rem;
-    color: #ccc;
     position: relative;
 }
 
-.card-info {
-    padding: 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
+.thumb-placeholder {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #999;
+    padding: 8px 16px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-.card-details h3 {
-    font-size: 1rem;
-    margin-bottom: 4px;
+.project-info {
+    padding: 20px;
+    position: relative;
+}
+
+.project-info h4 {
+    margin: 0 0 6px 0;
+    font-size: 1.1rem;
+    color: #1a1a1a;
+    font-weight: 600;
+    padding-right: 30px;
+}
+
+.project-info p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #888;
+}
+
+/* Three Dot Menu */
+.card-menu {
+    position: absolute;
+    top: 20px;
+    right: 12px;
+    z-index: 5;
+}
+
+.menu-trigger {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #999;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+.menu-trigger:hover {
+    background: rgba(0,0,0,0.05);
     color: #333;
 }
 
-.card-details p {
-    font-size: 0.8rem;
-    color: var(--text-muted);
+.menu-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    min-width: 140px;
+    display: none;
+    flex-direction: column;
+    padding: 6px;
+    z-index: 100;
 }
 
-.card-options {
-    background: none;
-    border: none;
-    color: #999;
+.menu-dropdown.active {
+    display: flex;
+}
+
+.menu-item {
+    padding: 10px 16px;
+    font-size: 0.9rem;
+    color: #333;
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 1.2rem;
-    padding: 4px;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.menu-item:hover {
+    background: #f5f5f5;
+}
+
+.menu-item.delete {
+    color: #ff4d4f;
+}
+
+.menu-item.delete:hover {
+    background: #fff1f0;
 }
 
 /* Empty State */
@@ -239,16 +292,6 @@
     text-align: center;
     padding: 80px 0;
     color: #999;
-}
-
-.empty-icon {
-    font-size: 4rem;
-    margin-bottom: 16px;
-    opacity: 0.5;
-}
-
-.hidden {
-    display: none !important;
 }
 
 /* 3. Modal Styles */
@@ -296,6 +339,7 @@
 
 .modal-header h2 {
     font-size: 1.25rem;
+    margin: 0;
 }
 
 .close-modal {
@@ -330,10 +374,11 @@
     font-size: 1rem;
     outline: none;
     transition: border-color 0.2s;
+    box-sizing: border-box;
 }
 
 .form-group input:focus {
-    border-color: var(--primary-color);
+    border-color: #008080;
 }
 
 .modal-footer {

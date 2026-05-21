@@ -89,6 +89,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function togglePlay() {
+        if (!isPlaying && document.querySelectorAll('.timeline-clip.video').length === 0) {
+            alert('Please add at least one image before playing.');
+            return;
+        }
         isPlaying = !isPlaying;
         if (isPlaying) {
             playBtn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg> Pause';
@@ -96,7 +100,6 @@ document.addEventListener('DOMContentLoaded', () => {
             requestAnimationFrame(playLoop);
         } else {
             playBtn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Play';
-            // Pause all audio when stopping
             document.querySelectorAll('audio').forEach(a => a.pause());
         }
     }
@@ -152,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const audio = document.createElement('audio');
             audio.src = audioSrc;
             audio.preload = 'auto';
-            audio.autoplay = false; // Explicitly disable autoplay
+            audio.autoplay = false;
             clip.appendChild(audio);
             audio.onloadedmetadata = () => { clip.dataset.duration = audio.duration; updateUI(); };
             const icon = document.createElement('span'); icon.innerHTML = '🎵 ';
@@ -175,6 +178,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
             window.addEventListener('mouseup', () => isTrimming = false);
+        } else if (type === 'text') {
+            clip.dataset.duration = CLIP_DEFAULT_DURATION;
+            clip.dataset.text = src; // 'src' will be the actual text for type='text'
+            const icon = document.createElement('span'); icon.innerHTML = 'T ';
+            clip.appendChild(icon);
         }
         
         const title = document.createElement('span');
